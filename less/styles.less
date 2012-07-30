@@ -1,0 +1,282 @@
+//
+// Variables
+// --------------------------------------------------
+
+
+// Global values
+// --------------------------------------------------
+
+// colors
+// -------------------------
+@bright:		#fff;
+@standard:		#99c9c5;
+@dark:			#000;
+
+// Accent colors
+// -------------------------
+@accent:		#ADF6CE;
+@lightAccent:	#E0FCED;
+
+// Scaffolding
+// -------------------------
+@bodyBackground:        @dark;
+@textColor:             @standard;
+
+// Links
+// -------------------------
+@linkColor:             @bright;
+@linkColorHover:        @accent;
+
+
+// Typography
+// -------------------------
+@sansFontFamily:        'Open Sans', Arial, sans-serif;
+@serifFontFamily:       Georgia, "Times New Roman", Times, serif;
+@monoFontFamily:        Monaco, Menlo, Consolas, "Courier New", monospace;
+
+@baseFontSize:          1em;
+@baseFontWeight:		400;
+@baseFontFamily:        @sansFontFamily;
+@baseLineHeight:        20px;
+
+@headingsFontFamily:    inherit; // empty to use BS default, @baseFontFamily
+@headingsFontWeight:    bold;    // instead of browser default, bold
+@headingsColor:         inherit; // empty to use BS default, @textColor
+
+
+// Styles
+// --------------------------------------------------
+
+body, select, input, textarea {
+	color: @textColor;
+	font-family: @baseFontFamily;
+	font-size: @baseFontSize;
+	font-weight: @baseFontWeight;
+}
+
+html, body {
+	background-color: @dark;
+	height: 100%;
+}
+
+p {
+	font-size: 0.9em;
+	line-height: 24px;
+	text-align: justify;
+}
+li {
+	color: lighten(@textColor, 10%);
+	font-size: 0.9em;
+	line-height: 25px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 600;
+	color: @bright;
+	margin: 0;
+}
+
+h2 {
+	font-size: 1.4em;
+}
+h3 {
+	font-size: 1.1em;
+}
+a {
+	color: @linkColor;
+	text-decoration: none;
+
+	&:visited {
+		color: @linkColor;
+	}
+	&:hover {
+		color: @linkColorHover;
+		text-decoration: none;
+	}
+}
+
+p, li, h3 {
+	a {
+		background-color: hsla(hue(@lightAccent), saturation(@lightAccent), lightness(@lightAccent), .15);
+		border-radius: 3px;
+		color: white;
+		display: inline-block;
+		font-size: .9em;
+		line-height: 19px;
+		padding: 0px 3px;
+
+		&:hover {
+			background-color: @accent;
+			color: @dark;
+			text-decoration: none;
+		}
+	}
+}
+
+.clear {
+	clear: both;
+}
+
+/* CONTAINERS */
+#outer {
+	background: url("../images/background.jpg");
+	background-position: top center;
+	background-attachment: fixed;
+	height: auto !important;
+	min-height: 100%;
+}
+#container {
+	width: 950px;
+	padding-bottom: 40px;
+	margin: 0 auto;
+}
+
+/* HEADER */
+#header {
+	position: relative;
+	top: 25px;
+	left: -10px;
+	margin-left: 40px;
+	.clearfix;
+
+	h1 {
+		background: url("../images/codecollision_logo.png") no-repeat top left;
+		display: block;
+		position: relative;
+		width: 344px;
+		height: 109px;
+
+		span {
+			display: none;
+		}
+	}
+}
+
+/* CONTENT */
+#content {
+	position: relative;
+	top: 50px;
+	width: 555px;
+	margin-left: 40px;
+
+	.project {
+		margin-bottom: 37px;
+
+		h2 {
+			display: none;
+		}
+
+		.image-box {
+			height: 50px;
+			overflow: hidden;
+		}
+	}
+	.image-box {
+		width: 461px;
+		border: 1px solid rgba(50, 150, 150, .3);
+		border-radius: 7px;
+		box-shadow: 4px 4px 20px -5px black;
+	}
+
+	img {
+		border-radius: 7px;
+	}
+
+	.post {
+
+		margin-bottom: 50px;
+
+		.header {
+			.clearfix;
+			margin-bottom: 30px;
+
+			.titlebar {
+
+				h2 {
+					font-size: 1.6em;
+					display: inline-block;
+				}
+				h2.date {
+					font-size: 1.4em;
+					color: @textColor;
+					float: right;
+				}
+			}
+
+			.categories {
+				.clearfix;
+
+				h3 {
+					font-size: .9em;
+					float: left;
+					margin-right: 10px;
+				}
+			}
+		}
+
+		.view {
+			margin-right: 15px;
+		}
+
+		.source {
+			margin-right: 15px;
+		}
+	}
+}
+
+/* NAVIGATION */
+#navigation {
+	position: fixed;
+	top: 194px;
+}
+
+/* MAIN NAVIGATION */
+#main-navigation {
+	position: absolute;
+	top: 0px;
+	left: 658px;
+
+	li {
+		position: absolute;
+		list-style: none;
+		a {
+			position: relative;
+			display: block;
+
+			span {
+				display: none;
+			}
+		}
+	}
+
+	#log {
+		top: 0px;
+		left: 12px;
+
+		a {
+			background: url(../images/log_button.png) no-repeat left top;
+			width: 130px;
+			height: 74px;
+		}
+	}
+	#projects {
+		top: 66px;
+		left: -7px;
+
+		a {
+			background: url(../images/projects_button.png) no-repeat left top;
+			width: 207px;
+			height: 81px;
+		}
+	}
+	#profile {
+		top: 133px;
+		left: -15px;
+
+		a {
+			background: url(../images/profile_button.png) no-repeat left top;
+			width: 179px;
+			height: 82px;
+		}
+	}
+}

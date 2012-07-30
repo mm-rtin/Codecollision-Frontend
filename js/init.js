@@ -1,0 +1,1 @@
+Codecollision.main.initialize();
