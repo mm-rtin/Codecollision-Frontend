@@ -14,7 +14,7 @@
 
 // Accent colors
 // -------------------------
-@accent:		#ADF6CE;
+@accent:		#CFFFF0;
 @lightAccent:	#E0FCED;
 
 // Scaffolding
@@ -122,9 +122,12 @@ p, li, h3 {
 	background: url("../images/background.jpg");
 	background-position: top center;
 	background-attachment: fixed;
+	background-repeat: none;
 	height: auto !important;
 	min-height: 100%;
 }
+
+/* desktop version */
 #container {
 	width: 950px;
 	padding-bottom: 40px;
@@ -159,7 +162,9 @@ p, li, h3 {
 	width: 555px;
 	margin-left: 40px;
 
+	/* project page */
 	.project {
+		width: 461px;
 		margin-bottom: 37px;
 
 		h2 {
@@ -167,7 +172,7 @@ p, li, h3 {
 		}
 
 		.image-box {
-			height: 50px;
+			height: 67px;
 			overflow: hidden;
 		}
 	}
@@ -177,13 +182,12 @@ p, li, h3 {
 		border-radius: 7px;
 		box-shadow: 4px 4px 20px -5px black;
 	}
-
 	img {
 		border-radius: 7px;
 	}
 
+	/* posts */
 	.post {
-
 		margin-bottom: 50px;
 
 		.header {
@@ -191,7 +195,6 @@ p, li, h3 {
 			margin-bottom: 30px;
 
 			.titlebar {
-
 				h2 {
 					font-size: 1.6em;
 					display: inline-block;
@@ -202,7 +205,6 @@ p, li, h3 {
 					float: right;
 				}
 			}
-
 			.categories {
 				.clearfix;
 
@@ -213,11 +215,9 @@ p, li, h3 {
 				}
 			}
 		}
-
 		.view {
 			margin-right: 15px;
 		}
-
 		.source {
 			margin-right: 15px;
 		}
@@ -257,6 +257,10 @@ p, li, h3 {
 			background: url(../images/log_button.png) no-repeat left top;
 			width: 130px;
 			height: 74px;
+
+			&:active {
+				.opacity(50);
+			}
 		}
 	}
 	#projects {
@@ -267,6 +271,11 @@ p, li, h3 {
 			background: url(../images/projects_button.png) no-repeat left top;
 			width: 207px;
 			height: 81px;
+
+			&:active {
+				.opacity(50);
+			}
+
 		}
 	}
 	#profile {
@@ -277,6 +286,10 @@ p, li, h3 {
 			background: url(../images/profile_button.png) no-repeat left top;
 			width: 179px;
 			height: 82px;
+
+			&:active {
+				.opacity(50);
+			}
 		}
 	}
 }
