@@ -21,9 +21,6 @@
 
         // objects
 
-        // jquery elements
-        $siteContainer: $('#container'),
-
         /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         * initialize -
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -46,26 +43,8 @@
                 return false;
             }
 
-            // get rootURL
-            rootUrl = History.getRootUrl();
-
-            // jQuery internal link selector
-            $.expr[':'].internal = function(obj, index, meta, stack){
-                // Prepare
-                var
-                    $this = $(obj),
-                    url = $this.attr('href')||'',
-                    isInternalLink;
-
-                // Check link
-                isInternalLink = url.substring(0, rootUrl.length) === rootUrl || url.indexOf(':') === -1;
-
-                // Ignore or Keep
-                return isInternalLink;
-            };
-
             // ajaxify links
-            this._ajaxifyLinks(this.$siteContainer);
+            this._ajaxifyLinks(Codecollision.main.$siteContainer);
 
             // window: statechange event
             History.Adapter.bind(window,'statechange', function(){

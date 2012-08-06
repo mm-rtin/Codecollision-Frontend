@@ -8,14 +8,14 @@
 
 // colors
 // -------------------------
-@bright:		#fff;
-@standard:		#99c9c5;
-@dark:			#000;
+@bright:        #fff;
+@standard:      #99c9c5;
+@dark:          #000;
 
 // Accent colors
 // -------------------------
-@accent:		#CFFFF0;
-@lightAccent:	#E0FCED;
+@accent:        #CFFFF0;
+@lightAccent:   #E0FCED;
 
 // Scaffolding
 // -------------------------
@@ -35,7 +35,7 @@
 @monoFontFamily:        Monaco, Menlo, Consolas, "Courier New", monospace;
 
 @baseFontSize:          1em;
-@baseFontWeight:		400;
+@baseFontWeight:        400;
 @baseFontFamily:        @sansFontFamily;
 @baseLineHeight:        20px;
 
@@ -48,248 +48,369 @@
 // --------------------------------------------------
 
 body, select, input, textarea {
-	color: @textColor;
-	font-family: @baseFontFamily;
-	font-size: @baseFontSize;
-	font-weight: @baseFontWeight;
+    color: @textColor;
+    font-family: @baseFontFamily;
+    font-size: @baseFontSize;
+    font-weight: @baseFontWeight;
+}
+
+html {
+    overflow-y: -moz-scrollbars-vertical;
+    overflow-y: scroll;
 }
 
 html, body {
-	background-color: @dark;
-	height: 100%;
+    background-color: @dark;
+    height: 100%;
 }
 
 p {
-	font-size: 0.9em;
-	line-height: 24px;
-	text-align: justify;
+    font-size: 0.9em;
+    line-height: 24px;
+    text-align: justify;
 }
 li {
-	color: lighten(@textColor, 10%);
-	font-size: 0.9em;
-	line-height: 25px;
+    color: lighten(@textColor, 10%);
+    list-style-image: url('../images/list_bullet.png');
+    font-size: 0.9em;
+    line-height: 25px;
 }
 
 h1, h2, h3, h4, h5, h6 {
-	font-weight: 600;
-	color: @bright;
-	margin: 0;
+    font-weight: 600;
+    color: @bright;
+    margin: 0;
 }
 
 h2 {
-	font-size: 1.4em;
+    font-size: 1.4em;
 }
 h3 {
-	font-size: 1.1em;
+    font-size: 1.1em;
 }
 a {
-	color: @linkColor;
-	text-decoration: none;
+    color: @linkColor;
+    text-decoration: none;
 
-	&:visited {
-		color: @linkColor;
-	}
-	&:hover {
-		color: @linkColorHover;
-		text-decoration: none;
-	}
+    &:visited {
+        color: @linkColor;
+    }
+    &:hover {
+        color: @linkColorHover;
+        text-decoration: none;
+    }
 }
 
 p, li, h3 {
-	a {
-		background-color: hsla(hue(@lightAccent), saturation(@lightAccent), lightness(@lightAccent), .15);
-		border-radius: 3px;
-		color: white;
-		display: inline-block;
-		font-size: .9em;
-		line-height: 19px;
-		padding: 0px 3px;
+    a {
+        background-color: hsla(hue(@lightAccent), saturation(@lightAccent), lightness(@lightAccent), .15);
+        border-radius: 3px;
+        color: white;
+        display: inline-block;
+        font-size: .9em;
+        line-height: 19px;
+        padding: 0px 3px;
 
-		&:hover {
-			background-color: @accent;
-			color: @dark;
-			text-decoration: none;
-		}
-	}
+        &:hover {
+            background-color: @accent;
+            color: @dark;
+            text-decoration: none;
+        }
+    }
 }
 
-.clear {
-	clear: both;
+
+/* 768px to 1024px
+-------------------------------------------------------*/
+@media screen and (min-width: 760px) and (max-width: 1030px) {
+
+    body #container {
+        width: 750px;
+    }
+    body #header {
+        margin-left: 25px;
+    }
+    body #content {
+        width: 464px;
+        margin-left: 25px;
+    }
+    body #main-navigation {
+        left: 554px;
+    }
+}
+
+/* 0px to 760px
+-------------------------------------------------------*/
+@media screen and (max-width: 760px) {
+
+    body {
+        font-size: 0.9em;
+    }
+
+    p {
+        text-align: left;
+    }
+
+    body #container {
+        margin-left: 8%;
+        width: 293px;
+    }
+    body #header {
+        margin-left: 0px;
+
+        h1 {
+            background-size: 100%;
+            width: 302px;
+            height: 93px;
+        }
+    }
+    body #content {
+        width: 282px;
+        margin-left: 0px;
+
+        .image-box {
+            width: 284px;
+            img {
+                width: 284px;
+                height: 141px;
+            }
+        }
+
+        .post {
+            .header {
+                margin-bottom: 20px;
+
+                .titlebar {
+                    h2.date {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    body #main-navigation {
+        left: 323px;
+
+        li a {
+            background-size: 80%;
+        }
+    }
+}
+
+
+/* ANIMATION */
+@-webkit-keyframes opacity {
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: .4;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+@-moz-keyframes opacity {
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: .4;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+.opacity-loop {
+    -webkit-animation: opacity 2s linear infinite;
+    -moz-animation: opacity 2s linear infinite;
+}
+
+/* COMPONETS */
+#loading-status {
+    background: url("../images/loading_icon.png");
+    display: none;
+    margin-left: -44px;
+    position: relative;
+    top: 112px;
+    left: 33%;
+    width: 88px;
+    height: 57px;
 }
 
 /* CONTAINERS */
 #outer {
-	background: url("../images/background.jpg");
-	background-position: top center;
-	background-attachment: fixed;
-	background-repeat: none;
-	height: auto !important;
-	min-height: 100%;
+    background: url("../images/background.jpg");
+    background-position: top center;
+    background-attachment: fixed;
+    background-repeat: none;
+    height: auto !important;
+    min-height: 100%;
 }
 
 /* desktop version */
 #container {
-	width: 950px;
-	padding-bottom: 40px;
-	margin: 0 auto;
+    width: 950px;
+    padding-bottom: 100px;
+    margin: 0 auto;
 }
 
 /* HEADER */
 #header {
-	position: relative;
-	top: 25px;
-	left: -10px;
-	margin-left: 40px;
-	.clearfix;
+    position: relative;
+    top: 25px;
+    left: -10px;
+    margin-left: 40px;
+    .clearfix;
 
-	h1 {
-		background: url("../images/codecollision_logo.png") no-repeat top left;
-		display: block;
-		position: relative;
-		width: 344px;
-		height: 109px;
+    h1 {
+        background: url("../images/codecollision_logo.png") no-repeat top left;
+        display: block;
+        position: relative;
+        width: 344px;
+        height: 109px;
 
-		span {
-			display: none;
-		}
-	}
+        span {
+            display: none;
+        }
+    }
 }
 
 /* CONTENT */
 #content {
-	position: relative;
-	top: 50px;
-	width: 555px;
-	margin-left: 40px;
+    position: relative;
+    top: 50px;
+    width: 555px;
+    margin-left: 40px;
 
-	/* project page */
-	.project {
-		width: 461px;
-		margin-bottom: 37px;
+    /* project page */
+    .project {
+        width: 461px;
+        margin-bottom: 37px;
 
-		h2 {
-			display: none;
-		}
+        h2 {
+            display: none;
+        }
 
-		.image-box {
-			height: 67px;
-			overflow: hidden;
-		}
-	}
-	.image-box {
-		width: 461px;
-		border: 1px solid rgba(50, 150, 150, .3);
-		border-radius: 7px;
-		box-shadow: 4px 4px 20px -5px black;
-	}
-	img {
-		border-radius: 7px;
-	}
+        .image-box {
+            height: 67px;
+            overflow: hidden;
+        }
+    }
+    .image-box {
+        width: 461px;
+        border: 1px solid rgba(50, 150, 150, .3);
+        border-radius: 7px;
+        box-shadow: 4px 4px 20px -5px black;
+    }
+    img {
+        border-radius: 7px;
+    }
 
-	/* posts */
-	.post {
-		margin-bottom: 50px;
+    /* posts */
+    .post {
+        margin-bottom: 50px;
 
-		.header {
-			.clearfix;
-			margin-bottom: 30px;
+        .header {
+            .clearfix;
+            margin-bottom: 30px;
 
-			.titlebar {
-				h2 {
-					font-size: 1.6em;
-					display: inline-block;
-				}
-				h2.date {
-					font-size: 1.4em;
-					color: @textColor;
-					float: right;
-				}
-			}
-			.categories {
-				.clearfix;
+            .titlebar {
+                h2 {
+                    font-size: 1.6em;
+                    display: inline-block;
+                }
+                h2.date {
+                    font-size: 1.4em;
+                    color: @textColor;
+                    float: right;
+                }
+            }
+            .categories {
+                .clearfix;
 
-				h3 {
-					font-size: .9em;
-					float: left;
-					margin-right: 10px;
-				}
-			}
-		}
-		.view {
-			margin-right: 15px;
-		}
-		.source {
-			margin-right: 15px;
-		}
-	}
+                h3 {
+                    font-size: .9em;
+                    float: left;
+                    margin-right: 10px;
+                }
+            }
+        }
+        .view {
+            margin-right: 15px;
+        }
+        .source {
+            margin-right: 15px;
+        }
+    }
 }
 
 /* NAVIGATION */
 #navigation {
-	position: fixed;
-	top: 194px;
+    position: fixed;
+    top: 194px;
 }
 
 /* MAIN NAVIGATION */
 #main-navigation {
-	position: absolute;
-	top: 0px;
-	left: 658px;
+    position: absolute;
+    top: 0px;
+    left: 658px;
 
-	li {
-		position: absolute;
-		list-style: none;
-		a {
-			position: relative;
-			display: block;
+    li {
+        position: absolute;
+        list-style: none;
+        a {
+            position: relative;
+            display: block;
 
-			span {
-				display: none;
-			}
-		}
-	}
+            span {
+                display: none;
+            }
+        }
+    }
 
-	#log {
-		top: 0px;
-		left: 12px;
+    #log {
+        top: 0px;
+        left: 12px;
 
-		a {
-			background: url(../images/log_button.png) no-repeat left top;
-			width: 130px;
-			height: 74px;
+        a {
+            background: url(../images/log_button.png) no-repeat left top;
+            width: 130px;
+            height: 74px;
 
-			&:active {
-				.opacity(50);
-			}
-		}
-	}
-	#projects {
-		top: 66px;
-		left: -7px;
+            &:active {
+                .opacity(80);
+            }
+        }
+    }
+    #projects {
+        top: 66px;
+        left: -7px;
 
-		a {
-			background: url(../images/projects_button.png) no-repeat left top;
-			width: 207px;
-			height: 81px;
+        a {
+            background: url(../images/projects_button.png) no-repeat left top;
+            width: 207px;
+            height: 81px;
 
-			&:active {
-				.opacity(50);
-			}
+            &:active {
+                .opacity(80);
+            }
 
-		}
-	}
-	#profile {
-		top: 133px;
-		left: -15px;
+        }
+    }
+    #profile {
+        top: 133px;
+        left: -15px;
 
-		a {
-			background: url(../images/profile_button.png) no-repeat left top;
-			width: 179px;
-			height: 82px;
+        a {
+            background: url(../images/profile_button.png) no-repeat left top;
+            width: 179px;
+            height: 82px;
 
-			&:active {
-				.opacity(50);
-			}
-		}
-	}
+            &:active {
+                .opacity(80);
+            }
+        }
+    }
 }

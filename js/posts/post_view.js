@@ -12,8 +12,10 @@
 
         // jquery elements
         $contentContainer: $('#content'),
+        $loadingStatus: $('#loading-status'),
 
         // objects
+        loadingStatusTimeout: null,
 		postsTemplate: _.template($('#posts-template').html()),
 
         /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,6 +52,9 @@
 
             var _this = this;
 
+            // show status
+            this.showStatus(mode);
+
             // get posts
             Codecollision.posts.model.getPosts(url, function(data) {
                 _this._getPosts_result(data, mode);
@@ -69,6 +74,9 @@
         * _displayPosts - render posts to content container
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         _displayPosts: function(posts, mode) {
+
+            // hide loading status
+            this.hideStatus();
 
             // check if posts available
             if (posts.post_list.length !== 0) {
@@ -97,7 +105,53 @@
                     Codecollision.main.infiniteScrollEnabled = true;
                 }
             }
+
+            // trigger render complete event
+            $(document).trigger('post_render_complete');
         },
+
+        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        * showStatus -
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        showStatus: function(mode) {
+
+            var _this = this;
+
+            if (mode === 'replace') {
+
+                // delay by 100ms
+                this.loadingStatusTimeout = window.setTimeout(function() {
+
+                    // clear content
+                    _this.$contentContainer.empty();
+
+                    // show loading status
+                    _this.$loadingStatus.fadeIn(function() {
+
+                        // when fadeIn completes > start animation
+                       _this.$loadingStatus.addClass('opacity-loop');
+                    });
+
+                    _this.loadingStatusTimeout = null;
+                }, 100);
+            }
+        },
+
+        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        * hideStatus -
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        hideStatus: function() {
+
+            if (typeof this.loadingStatusTimeout == "number") {
+                window.clearTimeout(this.loadingStatusTimeout);
+                this.loadingStatusTimeout = null;
+            } else {
+                // hide loading status
+                this.$loadingStatus.hide();
+                // stop animation
+                this.$loadingStatus.removeClass('opacity-loop');
+            }
+        }
 	});
 
 })(jQuery, _, Codecollision);

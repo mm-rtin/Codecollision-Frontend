@@ -1,0 +1,76 @@
+
+/* 760px to 1024px
+-------------------------------------------------------*/
+@media screen and (min-width: 760px) and (max-width: 1030px) {
+
+    body #container {
+        margin-left: -375px;
+    }
+}
+
+/* 490px to 760px
+-------------------------------------------------------*/
+@media screen and (min-width: 490px) and (max-width: 759px) {
+
+    body #container {
+        width: 611px;
+        margin-left: -291px;
+    }
+
+    body #content {
+        width: 411px;
+        margin-left: 0px;
+    }
+
+    body #main-navigation {
+        left: 433px;
+    }
+}
+
+/* 330px to 489px
+-------------------------------------------------------*/
+@media screen and (max-width: 330px) and (max-width: 489px) {
+
+    body #container {
+        width: 511px;
+        margin-left: -191px;
+    }
+
+    body #content {
+        width: 311px;
+        margin-left: 0px;
+    }
+
+    body #main-navigation {
+        left: 333px;
+    }
+}
+
+
+/* 0px to 329px
+-------------------------------------------------------*/
+@media screen and (max-width: 329px) {
+
+    body #container {
+        width: 411px;
+        margin-left: -144px;
+    }
+
+    body #content {
+        width: 292px;
+        margin-left: 0px;
+    }
+
+    body #main-navigation {
+        left: 313px;
+    }
+}
+
+/* ios version */
+#container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 50%;
+    z-index:1;
+}
