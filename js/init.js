@@ -1,1 +1,5 @@
-Codecollision.main.initialize();
+
+$(document).ready(function() {
+
+    Codecollision.main.initialize();
+});

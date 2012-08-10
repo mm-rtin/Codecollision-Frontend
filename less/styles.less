@@ -10,7 +10,7 @@
 // -------------------------
 @bright:        #fff;
 @standard:      #99c9c5;
-@dark:          #000;
+@dark:          #092739;
 
 // Accent colors
 // -------------------------
@@ -60,8 +60,11 @@ html {
 }
 
 html, body {
-    background-color: @dark;
     height: 100%;
+}
+
+body {
+    background-color: @dark;
 }
 
 p {
@@ -71,7 +74,7 @@ p {
 }
 li {
     color: lighten(@textColor, 10%);
-    list-style-image: url('../images/list_bullet.png');
+    list-style-image: url('http://dtli0f3gwjwjm.cloudfront.net/images/list_bullet.png');
     font-size: 0.9em;
     line-height: 25px;
 }
@@ -120,79 +123,181 @@ p, li, h3 {
 }
 
 
-/* 768px to 1024px
+/* 730px to 1024px
 -------------------------------------------------------*/
-@media screen and (min-width: 760px) and (max-width: 1030px) {
+@media screen and (min-width: 730px) and (max-width: 1030px) {
 
-    body #container {
-        width: 750px;
-    }
-    body #header {
-        margin-left: 25px;
-    }
-    body #content {
-        width: 464px;
-        margin-left: 25px;
-    }
-    body #main-navigation {
-        left: 554px;
+    body {
+
+        #backstretch {
+            img {
+                min-height: 800px;
+            }
+        }
+
+        #container {
+            width: 90%;
+        }
+        #header {
+        }
+        #content {
+            width: 60%;
+        }
+        #navigation {
+            width: 90%;
+        }
+        #main-navigation {
+            left: 71%;
+        }
     }
 }
 
-/* 0px to 760px
+/* 600px to 729px
 -------------------------------------------------------*/
-@media screen and (max-width: 760px) {
+@media screen and (min-width: 0px) and (max-width: 729px) {
 
     body {
         font-size: 0.9em;
-    }
 
-    p {
-        text-align: left;
-    }
-
-    body #container {
-        margin-left: 8%;
-        width: 293px;
-    }
-    body #header {
-        margin-left: 0px;
-
-        h1 {
-            background-size: 100%;
-            width: 302px;
-            height: 93px;
+        p {
+            text-align: left;
         }
-    }
-    body #content {
-        width: 282px;
-        margin-left: 0px;
 
-        .image-box {
-            width: 284px;
+        #backstretch {
             img {
-                width: 284px;
-                height: 141px;
+                min-height: 300px;
             }
         }
 
-        .post {
-            .header {
-                margin-bottom: 20px;
+        #container {
+            min-width: 289px;
+            width: 90%;
+        }
+        #header {
+            margin-left: 0px;
 
-                .titlebar {
-                    h2.date {
-                        display: none;
+            h1 {
+                background-size: 100%;
+                width: 302px;
+                height: 93px;
+            }
+        }
+        #content {
+            width: 100%;
+            margin-left: 0px;
+            margin-top: 55px;
+
+            .post {
+                .header {
+                    margin-bottom: 20px;
+
+                    .titlebar {
+                        h2.date {
+                            display: none;
+                        }
                     }
+                }
+
+                .content {
+                    padding: 10px;
+                    border-radius: 4px;
+                    background-color: rgba(0, 0, 0, 0.25);
                 }
             }
         }
-    }
-    body #main-navigation {
-        left: 323px;
 
-        li a {
-            background-size: 80%;
+        #navigation {
+            position: absolute;
+            width: 90%;
+            min-width: 288px;
+            top: 100px;
+        }
+        #main-navigation {
+            left: 0px;
+
+            li {
+                position: relative;
+                float: left;
+            }
+            #log {
+                top: 0px;
+                left: 0px;
+
+                a {
+                    background-size: 100%;
+                    width: 90px;
+                    height: 65px;
+                }
+            }
+            #projects {
+                top: 0px;
+                left: -8px;
+
+                a {
+                    background-size: 100%;
+                    width: 157px;
+                    height: 65px;
+                }
+            }
+            #profile {
+                top: -2px;
+                left: -19px;
+
+                a {
+                    background-size: 100%;
+                    width: 137px;
+                    height: 65px;
+                }
+            }
+        }
+
+
+    }
+}
+
+/* 0px to 599px
+-------------------------------------------------------*/
+@media screen and (min-width: 0px) and (max-width: 450px) {
+
+    body {
+
+        #content {
+            margin-top: 35px;
+        }
+
+        #navigation {
+            width: 90%;
+        }
+
+        #main-navigation {
+
+            #log {
+                top: 0px;
+                left: 0px;
+
+                a {
+                    width: 63px;
+                    height: 45px;
+                }
+            }
+            #projects {
+                top: 0px;
+                left: -8px;
+
+                a {
+                    width: 111px;
+                    height: 45px;
+                }
+            }
+            #profile {
+                top: -1px;
+                left: -19px;
+
+                a {
+                    width: 93px;
+                    height: 45px;
+                }
+            }
         }
     }
 }
@@ -227,8 +332,18 @@ p, li, h3 {
 }
 
 /* COMPONETS */
+#backstretch {
+    img {
+        min-height: 1100px;
+    }
+}
+
+.orbit-wrapper {
+    max-width: 463px;
+}
+
 #loading-status {
-    background: url("../images/loading_icon.png");
+    background: url("http://dtli0f3gwjwjm.cloudfront.net/images/loading_icon.png");
     display: none;
     margin-left: -44px;
     position: relative;
@@ -239,14 +354,6 @@ p, li, h3 {
 }
 
 /* CONTAINERS */
-#outer {
-    background: url("../images/background.jpg");
-    background-position: top center;
-    background-attachment: fixed;
-    background-repeat: none;
-    height: auto !important;
-    min-height: 100%;
-}
 
 /* desktop version */
 #container {
@@ -260,11 +367,10 @@ p, li, h3 {
     position: relative;
     top: 25px;
     left: -10px;
-    margin-left: 40px;
     .clearfix;
 
     h1 {
-        background: url("../images/codecollision_logo.png") no-repeat top left;
+        background: url("http://dtli0f3gwjwjm.cloudfront.net/images/codecollision_logo.png") no-repeat top left;
         display: block;
         position: relative;
         width: 344px;
@@ -281,27 +387,32 @@ p, li, h3 {
     position: relative;
     top: 50px;
     width: 555px;
-    margin-left: 40px;
 
     /* project page */
     .project {
-        width: 461px;
+        max-width: 461px;
         margin-bottom: 37px;
 
         h2 {
             display: none;
         }
 
-        .image-box {
+        .project-box {
             height: 67px;
             overflow: hidden;
+            border: 1px solid rgba(50, 150, 150, .3);
+            border-radius: 7px;
+            box-shadow: 4px 4px 20px -5px black;
         }
     }
     .image-box {
-        width: 461px;
         border: 1px solid rgba(50, 150, 150, .3);
         border-radius: 7px;
         box-shadow: 4px 4px 20px -5px black;
+        max-height: 229px;
+        max-width: 461px;
+        width: inherit;
+        height: inherit;
     }
     img {
         border-radius: 7px;
@@ -348,15 +459,19 @@ p, li, h3 {
 /* NAVIGATION */
 #navigation {
     position: fixed;
+    width: 950px;
     top: 194px;
 }
 
 /* MAIN NAVIGATION */
 #main-navigation {
-    position: absolute;
+    left: 66%;
+    position: relative;
     top: 0px;
-    left: 658px;
 
+    ul {
+        padding: 0px;
+    }
     li {
         position: absolute;
         list-style: none;
@@ -375,7 +490,9 @@ p, li, h3 {
         left: 12px;
 
         a {
-            background: url(../images/log_button.png) no-repeat left top;
+            background: url(http://dtli0f3gwjwjm.cloudfront.net/images/log_button.png);
+            background-repeat: no-repeat;
+            background-position: left top;
             width: 130px;
             height: 74px;
 
@@ -389,7 +506,9 @@ p, li, h3 {
         left: -7px;
 
         a {
-            background: url(../images/projects_button.png) no-repeat left top;
+            background: url(http://dtli0f3gwjwjm.cloudfront.net/images/projects_button.png);
+            background-repeat: no-repeat;
+            background-position: left top;
             width: 207px;
             height: 81px;
 
@@ -404,7 +523,9 @@ p, li, h3 {
         left: -15px;
 
         a {
-            background: url(../images/profile_button.png) no-repeat left top;
+            background: url(http://dtli0f3gwjwjm.cloudfront.net/images/profile_button.png);
+            background-repeat: no-repeat;
+            background-position: left top;
             width: 179px;
             height: 82px;
 

@@ -3,7 +3,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 Structure.init("Codecollision");
 
-(function($, _, Codecollision, iScroll, yepnope) {
+(function($, _, Codecollision) {
     "use strict";
 
     var isMobile = function(a,b) {
@@ -45,14 +45,8 @@ Structure.init("Codecollision");
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         initialize: function () {
 
-            // test for mobile device and load mobile specific css and javascript
-            yepnope({
-                test: isMobile(navigator.userAgent||navigator.vendor||window.opera),
-                yep: ['http://media.codecollision.com/css/mobile.css', 'http://media.codecollision.com/js/mobile.js'],
-                complete: function () {
-
-                }
-            });
+            // init backstretch
+            $.backstretch('http://dtli0f3gwjwjm.cloudfront.net/images/background.jpg', {speed: 150, centeredY: false});
 
             // extend jQuery
             this.extendjQuery();
@@ -68,6 +62,9 @@ Structure.init("Codecollision");
 
             // intialize inifinite scroll
             this._initializeInfiniteScroll();
+
+            // initialize orbit
+            this._initializeOrbit();
 
             // initialize modules
             Codecollision.posts.model.initialize();
@@ -111,11 +108,15 @@ Structure.init("Codecollision");
 
             var _this = this;
 
-            // window: page_change
+            // document: page_change
             $(document).bind('page_change', function(event, url, mode) {
                 _this._handlePageChange(url, mode);
             });
 
+            // document: render complete
+            $(document).bind('post_render_complete', function(e) {
+                _.delay(_this._initializeOrbit, 10);
+            });
 
             /* MAIN NAVIGATION EVENTS -
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -223,6 +224,21 @@ Structure.init("Codecollision");
         },
 
         /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        * _initializeOrbit -
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        _initializeOrbit: function() {
+
+            $('.image-box').each(function() {
+
+                var data = $.data(this, 'events');
+                if (!data || !_.has(data, 'orbit')) {
+                    $(this).orbit();
+                }
+
+            });
+        },
+
+        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         * _initializeInfiniteScroll -
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         _initializeInfiniteScroll: function() {
@@ -269,4 +285,4 @@ Structure.init("Codecollision");
         }
     });
 
-})(jQuery, _, Codecollision, iScroll, yepnope);
+})(jQuery, _, Codecollision);

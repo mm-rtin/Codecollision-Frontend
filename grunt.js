@@ -19,11 +19,20 @@ module.exports = function(grunt) {
 			js: [
 
 				// libraries
-				'lib/underscore.min.js',
 				'lib/structure.min.js',
+				'lib/underscore.min.js',
+				'lib/jquery.history.min.js',
+				'lib/jquery.backstretch.min.js',
+				'lib/jquery.foundation.orbit.js',
 
 				// codecollision source (order matters)
-				'js/codecollision.js'
+				'js/codecollision.js',
+				'js/util/history.js',
+				'js/util/utilities.js',
+				'js/util/prefetch.js',
+				'js/posts/post_model.js',
+				'js/posts/post_view.js',
+				'js/init.js'
 			],
 			less: [
 				'less/*.less'
@@ -35,7 +44,7 @@ module.exports = function(grunt) {
 				src: [
 					'<config:src.js>'
 				],
-				dest: 'dist/scripts.min.js'
+				dest: 'dist/scripts.js'
 			}
 		},
 		// minify
@@ -47,8 +56,8 @@ module.exports = function(grunt) {
 		},
 		// watch
 		watch: {
-			files: '<config:src.less>',
-			tasks: 'less'
+			files: '<config:src.js>',
+			tasks: 'less concat min'
 		},
 
 		uglify: {},
