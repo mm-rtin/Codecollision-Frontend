@@ -24,6 +24,7 @@ module.exports = function(grunt) {
 				'lib/jquery.history.min.js',
 				'lib/jquery.backstretch.min.js',
 				'lib/jquery.foundation.orbit.js',
+				'lib/jquery.imagesloaded.min.js',
 
 				// codecollision source (order matters)
 				'js/codecollision.js',

@@ -75,6 +75,8 @@
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         _displayPosts: function(posts, mode) {
 
+            var addedPosts = null;
+
             // hide loading status
             this.hideStatus();
 
@@ -83,7 +85,9 @@
 
                 // replace posts in contentContainer
                 if (mode === 'replace') {
-                    this.$contentContainer.html(this.postsTemplate(posts));
+
+                    // replace container html
+                    addedPosts = this.$contentContainer.html(this.postsTemplate(posts));
 
                     // scroll to top
                     $(document).scrollTop(0);
@@ -96,7 +100,9 @@
 
                     // verify that selectName matches currentCategory
                     if (posts.selectName === Codecollision.main.currentCategory) {
-                        this.$contentContainer.append(this.postsTemplate(posts));
+
+                        // append html to contentContainer
+                        addedPosts = $(this.postsTemplate(posts)).appendTo(this.$contentContainer);
                     }
                 }
 
@@ -107,7 +113,7 @@
             }
 
             // trigger render complete event
-            $(document).trigger('post_render_complete');
+            $(document).trigger('post_render_complete', addedPosts);
         },
 
         /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -334,7 +334,6 @@ p, li, h3 {
 /* COMPONETS */
 #backstretch {
     img {
-        min-height: 1100px;
     }
 }
 
@@ -406,16 +405,22 @@ p, li, h3 {
         }
     }
     .image-box {
-        border: 1px solid rgba(50, 150, 150, .3);
-        border-radius: 7px;
-        box-shadow: 4px 4px 20px -5px black;
-        max-height: 229px;
         max-width: 461px;
         width: inherit;
         height: inherit;
+
+        img {
+            border-radius: 7px;
+            margin-bottom: 10px;
+        }
     }
-    img {
+    .image-box.orbit {
         border-radius: 7px;
+        box-shadow: 4px 4px 20px -5px black;
+
+        img {
+            margin-bottom: 0px;
+        }
     }
 
     /* posts */

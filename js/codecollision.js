@@ -45,8 +45,35 @@ Structure.init("Codecollision");
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
         initialize: function () {
 
+            console.info('initialize');
+
+            var _this = this;
+            var postCount = 0;
+            var postImagesLoaded = 0;
+
+            // for each post entry check if images loaded
+            this.$siteContainer.find('.post').each(function() {
+
+                postCount++;
+
+                // post's images have loaded
+                $(this).imagesLoaded(function($images, $proper, $broken) {
+
+                    postImagesLoaded++;
+
+                    // initialize orbit
+                    _this._initializeOrbit($(this));
+
+                    // if all posts images loaded > start infinite scroll
+                    if (postCount === postImagesLoaded) {
+                    }
+                });
+            });
+
+            _this._initializeInfiniteScroll();
+
             // init backstretch
-            $.backstretch('http://dtli0f3gwjwjm.cloudfront.net/images/background.jpg', {speed: 150, centeredY: false});
+            $.backstretch('http://dtli0f3gwjwjm.cloudfront.net/images/background.jpg', {speed: 1000, centeredY: false});
 
             // extend jQuery
             this.extendjQuery();
@@ -60,12 +87,6 @@ Structure.init("Codecollision");
             // intialize history
             Codecollision.util.history.initialize();
 
-            // intialize inifinite scroll
-            this._initializeInfiniteScroll();
-
-            // initialize orbit
-            this._initializeOrbit();
-
             // initialize modules
             Codecollision.posts.model.initialize();
             Codecollision.posts.view.initialize();
@@ -73,7 +94,6 @@ Structure.init("Codecollision");
             // prefetch
             Codecollision.util.prefetch.initialize();
         },
-
 
         /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         * extendjQuery -
@@ -114,8 +134,14 @@ Structure.init("Codecollision");
             });
 
             // document: render complete
-            $(document).bind('post_render_complete', function(e) {
-                _.delay(_this._initializeOrbit, 10);
+            $(document).bind('post_render_complete', function(e, posts) {
+
+                var $posts = $(posts);
+
+                // when $posts images loaded > initialize orbit on $posts container
+                $posts.imagesLoaded(function($images, $proper, $broken) {
+                    _this._initializeOrbit($posts);
+                });
             });
 
             /* MAIN NAVIGATION EVENTS -
@@ -226,16 +252,29 @@ Structure.init("Codecollision");
         /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         * _initializeOrbit -
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        _initializeOrbit: function() {
+        _initializeOrbit: function($container) {
 
-            $('.image-box').each(function() {
+            // initialize all image-box elements
+            if (_.isUndefined($container)) {
 
-                var data = $.data(this, 'events');
+                $('.image-box').each(function() {
+                    initializeOrbit(this);
+                });
+
+            // intialize image-box elements inside of $container
+            } else {
+
+               $container.find('.image-box').each(function() {
+                    initializeOrbit(this);
+                });
+            }
+
+            function initializeOrbit(element) {
+                var data = $.data(element, 'events');
                 if (!data || !_.has(data, 'orbit')) {
-                    $(this).orbit();
+                    $(element).orbit();
                 }
-
-            });
+            }
         },
 
         /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
