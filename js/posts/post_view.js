@@ -4,160 +4,165 @@
 (function($, _, Codecollision) {
     "use strict";
 
-	Codecollision.registerModule("Codecollision.posts.view", {
+    // constants
 
-        // constants
+    // properties
 
-        // public properties
-
-        // jquery elements
-        $contentContainer: $('#content'),
-        $loadingStatus: $('#loading-status'),
+    // jquery elements
+    var $contentContainer = Codecollision.main.config.$contentContainer,
+        $loadingStatus = Codecollision.main.config.$loadingStatus,
 
         // objects
-        loadingStatusTimeout: null,
-		postsTemplate: _.template($('#posts-template').html()),
+        loadingStatusTimeout = null,
+		postsTemplate = _.template($('#posts-template').html());
 
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * initialize -
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-		initialize: function () {
 
-            // create event handlers
-            this.createEventHandlers();
-		},
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * initialize -
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	var initialize = function () {
 
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * createEventHandlers -
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        createEventHandlers: function() {
+        // create event handlers
+        _createEventHandlers();
+	};
 
-            var _this = this;
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * changePage -
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var changePage = function(url, mode) {
 
-        },
+        // get posts
+        _getPosts(url, mode);
+    };
 
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * changePage -
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        changePage: function(url, mode) {
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * _createEventHandlers -
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var _createEventHandlers = function() {
 
-            // get posts
-            this._getPosts(url, mode);
-        },
+    };
 
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * _getPosts - get post data from model
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        _getPosts: function(url, mode) {
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * _getPosts - get post data from model
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var _getPosts = function(url, mode) {
 
-            var _this = this;
+        // show status
+        _showStatus(mode);
 
-            // show status
-            this.showStatus(mode);
+        // get posts
+        Codecollision.posts.model.getPosts(url, function(data) {
+            _getPosts_result(data, mode);
+        });
+    };
 
-            // get posts
-            Codecollision.posts.model.getPosts(url, function(data) {
-                _this._getPosts_result(data, mode);
-            });
-        },
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * _getPosts_result - result from getPosts
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var _getPosts_result = function(data, mode) {
 
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * _getPosts_result - result from getPosts
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        _getPosts_result: function(data, mode) {
+        // render posts
+        _displayPosts(data, mode);
+    };
 
-            // render posts
-            this._displayPosts(data, mode);
-        },
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * _displayPosts - render posts to content container
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var _displayPosts = function(posts, mode) {
 
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * _displayPosts - render posts to content container
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        _displayPosts: function(posts, mode) {
+        var addedPosts = null;
 
-            var addedPosts = null;
+        // hide loading status
+        _hideStatus();
 
-            // hide loading status
-            this.hideStatus();
+        // check if posts available
+        if (posts.post_list.length !== 0) {
 
-            // check if posts available
-            if (posts.post_list.length !== 0) {
+            // replace posts in contentContainer
+            if (mode === Codecollision.main.config.DISPLAY_MODE.replace) {
 
-                // replace posts in contentContainer
-                if (mode === 'replace') {
+                // replace container html
+                addedPosts = $contentContainer.html(postsTemplate(posts));
 
-                    // replace container html
-                    addedPosts = this.$contentContainer.html(this.postsTemplate(posts));
+                // scroll to top
+                $(document).scrollTop(0);
 
-                    // scroll to top
-                    $(document).scrollTop(0);
+            // append posts in contentContainer
+            } else if (mode === Codecollision.main.config.DISPLAY_MODE.append) {
 
-                    // reset current page
-                    Codecollision.main.currentPage = 1;
+                // verify that selectName matches currentCategory
+                if (posts.selectName === Codecollision.main.config.currentCategory) {
 
-                // append posts in contentContainer
-                } else if (mode === 'append') {
-
-                    // verify that selectName matches currentCategory
-                    if (posts.selectName === Codecollision.main.currentCategory) {
-
-                        // append html to contentContainer
-                        addedPosts = $(this.postsTemplate(posts)).appendTo(this.$contentContainer);
-                    }
-                }
-
-                // re-enable infinite scroll if more than 1 page
-                if (posts.max_pages > 1) {
-                    Codecollision.main.infiniteScrollEnabled = true;
+                    // append html to contentContainer
+                    addedPosts = $(postsTemplate(posts)).appendTo($contentContainer);
                 }
             }
 
-            // trigger render complete event
-            $(document).trigger('post_render_complete', addedPosts);
-        },
+            // update maxPages site config
+            Codecollision.main.config.maxPages = posts.max_pages;
+            Codecollision.main.config.nextPage = posts.next_page;
+            Codecollision.main.config.previousPage = posts.previous_page;
 
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * showStatus -
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        showStatus: function(mode) {
-
-            var _this = this;
-
-            if (mode === 'replace') {
-
-                // delay by 100ms
-                this.loadingStatusTimeout = window.setTimeout(function() {
-
-                    // clear content
-                    _this.$contentContainer.empty();
-
-                    // show loading status
-                    _this.$loadingStatus.fadeIn(function() {
-
-                        // when fadeIn completes > start animation
-                       _this.$loadingStatus.addClass('opacity-loop');
-                    });
-
-                    _this.loadingStatusTimeout = null;
-                }, 100);
-            }
-        },
-
-        /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        * hideStatus -
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-        hideStatus: function() {
-
-            if (typeof this.loadingStatusTimeout == "number") {
-                window.clearTimeout(this.loadingStatusTimeout);
-                this.loadingStatusTimeout = null;
-            } else {
-                // hide loading status
-                this.$loadingStatus.hide();
-                // stop animation
-                this.$loadingStatus.removeClass('opacity-loop');
+            // re-enable infinite scroll if current display has a next page
+            if (posts.next_page !== 0) {
+                Codecollision.main.config.infiniteContentEnabled = true;
             }
         }
-	});
+
+        // trigger render complete event
+        $(document).trigger('post_render_complete', addedPosts);
+    };
+
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * _showStatus - show post loading indicator
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var _showStatus = function(mode) {
+
+        if (mode === Codecollision.main.config.DISPLAY_MODE.replace) {
+
+            // delay by 100ms
+            loadingStatusTimeout = window.setTimeout(function() {
+
+                // clear content
+                $contentContainer.empty();
+
+                // show loading status
+                $loadingStatus.fadeIn(function() {
+
+                    // when fadeIn completes > start animation
+                   $loadingStatus.addClass('opacity-loop');
+                });
+
+                loadingStatusTimeout = null;
+            }, 100);
+        }
+    };
+
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * _hideStatus - hide post loading indicator
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var _hideStatus = function() {
+
+        if (typeof loadingStatusTimeout == "number") {
+            window.clearTimeout(loadingStatusTimeout);
+            loadingStatusTimeout = null;
+        } else {
+            // hide loading status
+            $loadingStatus.hide();
+            // stop animation
+            $loadingStatus.removeClass('opacity-loop');
+        }
+    };
+
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * public interface
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    Codecollision.registerModule("Codecollision.posts.view", {
+
+        // public methods
+        initialize: initialize,
+        changePage: changePage
+
+    });
 
 })(jQuery, _, Codecollision);

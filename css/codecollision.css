@@ -127,7 +127,11 @@ p a,li a,h3 a{background-color:rgba(223, 252, 236, 0.15);border-radius:3px;color
 #content .post .header .categories h3{font-size:.9em;float:left;margin-right:10px;}
 #content .post .view{margin-right:15px;}
 #content .post .source{margin-right:15px;}
-#navigation{position:fixed;width:950px;top:194px;}
+#navigation{position:fixed;top:194px;height:0px;width:950px;}
+#pageNavigation{*zoom:1;}#pageNavigation:before,#pageNavigation:after{display:table;content:"";line-height:0;}
+#pageNavigation:after{clear:both;}
+#pageNavigation ul{padding:0px;}
+#pageNavigation li{list-style:none;float:left;margin-right:10px;}
 #main-navigation{left:66%;position:relative;top:0px;}#main-navigation ul{padding:0px;}
 #main-navigation li{position:absolute;list-style:none;}#main-navigation li a{position:relative;display:block;}#main-navigation li a span{display:none;}
 #main-navigation #log{top:0px;left:12px;}#main-navigation #log a{background:url(http://dtli0f3gwjwjm.cloudfront.net/images/log_button.png);background-repeat:no-repeat;background-position:left top;width:130px;height:74px;}#main-navigation #log a:active{opacity:0.8;filter:alpha(opacity=80);}
