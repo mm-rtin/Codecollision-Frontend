@@ -13,6 +13,8 @@ Structure.init("Codecollision");
         PROJECT_FADE_OUT_AMOUNT = 0.5,
         PROJECT_FADE_DURATION = 250,
 
+        PAGE_LOAD_DELAY = 500,
+
         // objects
         mainNavigationAnimationTimeout = null,
         projectAnimationTimeout = null,
@@ -30,6 +32,7 @@ Structure.init("Codecollision");
             // jquery elements
             $siteContainer: $('#container'),
             $contentContainer: $('#content'),
+            $navigationContainer: $('#navigation'),
             $loadingStatus: $('#loading-status'),
             $pageNavigation: $('#pageNavigation'),
 
@@ -46,8 +49,11 @@ Structure.init("Codecollision");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var initialize = function () {
 
-        // save nextPage data attributes
-        config.nextPage = config.$contentContainer.data('nextpage');
+        // save page data attributes
+        config.currentCategory = config.$siteContainer.attr('data-category');
+        config.maxPages = parseInt(config.$siteContainer.attr('data-maxPages'), 10);
+        config.nextPage = parseInt(config.$siteContainer.attr('data-nextpage'), 10);
+        config.previousPage = parseInt(config.$siteContainer.attr('data-previousPage'), 10);
 
         // for each post entry check if images loaded
         config.$siteContainer.find('.post').each(function() {
@@ -69,9 +75,6 @@ Structure.init("Codecollision");
         // extend jQuery
         extendjQuery();
 
-        // update currentCategory
-        _updateCurrentCategory(window.location.pathname);
-
         // create event handlers
         _createEventHandlers();
 
@@ -87,6 +90,32 @@ Structure.init("Codecollision");
 
         // hide pageNavigation
         config.$pageNavigation.css({visibility: 'hidden'});
+
+        // fetch pages for current category
+        fetchPages();
+    };
+
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * fetchPages -
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var fetchPages = function() {
+
+        // fetch pages, returns jqXHR requests in array
+        var pageRequests = Codecollision.util.prefetch.fetchPages();
+
+        // when array of requests completes
+        $.when.apply($, pageRequests).then(function() {
+
+            var delayMultiplier = 1;
+
+            // for each fetched page, load into site on delay
+            _.each(pageRequests, function() {
+
+                // load next page after short delay
+                delayMultiplier++;
+                _.delay(_loadNext, PAGE_LOAD_DELAY * delayMultiplier);
+            });
+        });
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,13 +157,15 @@ Structure.init("Codecollision");
         // document: render complete
         $(document).bind('post_render_complete', function(e, posts) {
 
+            console.info('render complete');
+
             var $posts = $(posts);
 
             // prefetch links in $posts container
-            Codecollision.util.prefetch.prefetchPosts($posts);
+            Codecollision.util.prefetch.prefetchLinks([$posts]);
 
-            // prefetch pages
-            Codecollision.util.prefetch.prefetchPages();
+            // fetch pages
+            fetchPages();
 
             // when $posts images loaded > initialize orbit on $posts container
             $posts.imagesLoaded(function($images, $proper, $broken) {

@@ -13,23 +13,27 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var initialize = function () {
 
-        prefetchPosts(Codecollision.main.config.$siteContainer);
+        // prefetch links in main navigation and content
+        var containers = [Codecollision.main.config.$navigationContainer, Codecollision.main.config.$contentContainer];
+        prefetchLinks(containers);
     };
 
-
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    * prefetchPosts -
+    * prefetchLinks -
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    var prefetchPosts = function($container) {
+    var prefetchLinks = function(containers) {
 
         // prefetch links
-        _processInternalLinks($container);
+        _processInternalLinks(containers);
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    * prefetchPages -
+    * fetchPages -
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    var prefetchPages = function() {
+    var fetchPages = function() {
+
+        // all page requests
+        var ajaxRequests = [];
 
         var currentCategory = Codecollision.main.config.currentCategory;
 
@@ -42,28 +46,33 @@
         // prefetch pages from 1 to previousPage
         if (previousPage !== 0) {
             for (var i = 1, prevLen = previousPage; i <= prevLen; i++) {
-                _prefetchLink('/category/' + currentCategory + '/' + i);
+                ajaxRequests.push(_prefetchLink('/category/' + currentCategory + '/' + i));
             }
         }
 
         // prefetch pages from nextPage to maxPages
         if (nextPage !== 0) {
             for (var j = nextPage, nextLen = maxPages; j <= nextLen; j++) {
-                _prefetchLink('/category/' + currentCategory + '/' + j);
+                ajaxRequests.push(_prefetchLink('/category/' + currentCategory + '/' + j));
             }
         }
+
+        return ajaxRequests;
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * _processInternalLinks -
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    var _processInternalLinks = function($container) {
+    var _processInternalLinks = function(containers) {
 
-        // get all internal links inside $container
-        $container.find('a:internal:not(.no-ajax)').each(function() {
+        _.each(containers, function($container) {
 
-            // for each internal link > start prefetch
-            _prefetchLink($(this).prop('href'));
+            // get all internal links inside $container
+            $container.find('a:internal:not(.no-ajax)').each(function() {
+
+                // for each internal link > start prefetch
+                _prefetchLink($(this).prop('href'));
+            });
         });
     };
 
@@ -72,6 +81,8 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var _prefetchLink = function(url) {
 
+        var jqXHR = null;
+
         url = Codecollision.util.utilities.cleanURL(url);
 
         if (!_.has(_prefetchedLinks, url)) {
@@ -79,11 +90,13 @@
             _prefetchedLinks[url] = true;
 
             // prefetch url
-            Codecollision.posts.model.prefetchPostData(url, function(data) {
+            jqXHR = Codecollision.posts.model.prefetchPostData(url, function(data) {
 
                 // prefetch complete
             });
         }
+
+        return jqXHR;
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,8 +106,8 @@
 
         // public methods
         initialize: initialize,
-        prefetchPosts: prefetchPosts,
-        prefetchPages: prefetchPages
+        prefetchLinks: prefetchLinks,
+        fetchPages: fetchPages
     });
 
 })(jQuery, _, Codecollision);

@@ -697,6 +697,8 @@ Structure.init("Codecollision");
         PROJECT_FADE_OUT_AMOUNT = 0.5,
         PROJECT_FADE_DURATION = 250,
 
+        PAGE_LOAD_DELAY = 500,
+
         // objects
         mainNavigationAnimationTimeout = null,
         projectAnimationTimeout = null,
@@ -714,6 +716,7 @@ Structure.init("Codecollision");
             // jquery elements
             $siteContainer: $('#container'),
             $contentContainer: $('#content'),
+            $navigationContainer: $('#navigation'),
             $loadingStatus: $('#loading-status'),
             $pageNavigation: $('#pageNavigation'),
 
@@ -730,8 +733,11 @@ Structure.init("Codecollision");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var initialize = function () {
 
-        // save nextPage data attributes
-        config.nextPage = config.$contentContainer.data('nextpage');
+        // save page data attributes
+        config.currentCategory = config.$siteContainer.attr('data-category');
+        config.maxPages = parseInt(config.$siteContainer.attr('data-maxPages'), 10);
+        config.nextPage = parseInt(config.$siteContainer.attr('data-nextpage'), 10);
+        config.previousPage = parseInt(config.$siteContainer.attr('data-previousPage'), 10);
 
         // for each post entry check if images loaded
         config.$siteContainer.find('.post').each(function() {
@@ -753,9 +759,6 @@ Structure.init("Codecollision");
         // extend jQuery
         extendjQuery();
 
-        // update currentCategory
-        _updateCurrentCategory(window.location.pathname);
-
         // create event handlers
         _createEventHandlers();
 
@@ -771,6 +774,32 @@ Structure.init("Codecollision");
 
         // hide pageNavigation
         config.$pageNavigation.css({visibility: 'hidden'});
+
+        // fetch pages for current category
+        fetchPages();
+    };
+
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * fetchPages -
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    var fetchPages = function() {
+
+        // fetch pages, returns jqXHR requests in array
+        var pageRequests = Codecollision.util.prefetch.fetchPages();
+
+        // when array of requests completes
+        $.when.apply($, pageRequests).then(function() {
+
+            var delayMultiplier = 1;
+
+            // for each fetched page, load into site on delay
+            _.each(pageRequests, function() {
+
+                // load next page after short delay
+                delayMultiplier++;
+                _.delay(_loadNext, PAGE_LOAD_DELAY * delayMultiplier);
+            });
+        });
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -812,13 +841,15 @@ Structure.init("Codecollision");
         // document: render complete
         $(document).bind('post_render_complete', function(e, posts) {
 
+            console.info('render complete');
+
             var $posts = $(posts);
 
             // prefetch links in $posts container
-            Codecollision.util.prefetch.prefetchPosts($posts);
+            Codecollision.util.prefetch.prefetchLinks([$posts]);
 
-            // prefetch pages
-            Codecollision.util.prefetch.prefetchPages();
+            // fetch pages
+            fetchPages();
 
             // when $posts images loaded > initialize orbit on $posts container
             $posts.imagesLoaded(function($images, $proper, $broken) {
@@ -1183,23 +1214,27 @@ Structure.init("Codecollision");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var initialize = function () {
 
-        prefetchPosts(Codecollision.main.config.$siteContainer);
+        // prefetch links in main navigation and content
+        var containers = [Codecollision.main.config.$navigationContainer, Codecollision.main.config.$contentContainer];
+        prefetchLinks(containers);
     };
 
-
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    * prefetchPosts -
+    * prefetchLinks -
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    var prefetchPosts = function($container) {
+    var prefetchLinks = function(containers) {
 
         // prefetch links
-        _processInternalLinks($container);
+        _processInternalLinks(containers);
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    * prefetchPages -
+    * fetchPages -
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    var prefetchPages = function() {
+    var fetchPages = function() {
+
+        // all page requests
+        var ajaxRequests = [];
 
         var currentCategory = Codecollision.main.config.currentCategory;
 
@@ -1212,28 +1247,33 @@ Structure.init("Codecollision");
         // prefetch pages from 1 to previousPage
         if (previousPage !== 0) {
             for (var i = 1, prevLen = previousPage; i <= prevLen; i++) {
-                _prefetchLink('/category/' + currentCategory + '/' + i);
+                ajaxRequests.push(_prefetchLink('/category/' + currentCategory + '/' + i));
             }
         }
 
         // prefetch pages from nextPage to maxPages
         if (nextPage !== 0) {
             for (var j = nextPage, nextLen = maxPages; j <= nextLen; j++) {
-                _prefetchLink('/category/' + currentCategory + '/' + j);
+                ajaxRequests.push(_prefetchLink('/category/' + currentCategory + '/' + j));
             }
         }
+
+        return ajaxRequests;
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * _processInternalLinks -
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    var _processInternalLinks = function($container) {
+    var _processInternalLinks = function(containers) {
 
-        // get all internal links inside $container
-        $container.find('a:internal:not(.no-ajax)').each(function() {
+        _.each(containers, function($container) {
 
-            // for each internal link > start prefetch
-            _prefetchLink($(this).prop('href'));
+            // get all internal links inside $container
+            $container.find('a:internal:not(.no-ajax)').each(function() {
+
+                // for each internal link > start prefetch
+                _prefetchLink($(this).prop('href'));
+            });
         });
     };
 
@@ -1242,6 +1282,8 @@ Structure.init("Codecollision");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var _prefetchLink = function(url) {
 
+        var jqXHR = null;
+
         url = Codecollision.util.utilities.cleanURL(url);
 
         if (!_.has(_prefetchedLinks, url)) {
@@ -1249,11 +1291,13 @@ Structure.init("Codecollision");
             _prefetchedLinks[url] = true;
 
             // prefetch url
-            Codecollision.posts.model.prefetchPostData(url, function(data) {
+            jqXHR = Codecollision.posts.model.prefetchPostData(url, function(data) {
 
                 // prefetch complete
             });
         }
+
+        return jqXHR;
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1263,8 +1307,8 @@ Structure.init("Codecollision");
 
         // public methods
         initialize: initialize,
-        prefetchPosts: prefetchPosts,
-        prefetchPages: prefetchPages
+        prefetchLinks: prefetchLinks,
+        fetchPages: fetchPages
     });
 
 })(jQuery, _, Codecollision);
@@ -1278,7 +1322,7 @@ Structure.init("Codecollision");
     var AJAX_URL_APPEND = 'json/',
 
         // objects
-        _getPost_jqXHR = null,
+        ajaxRequests = [],
 
         // data
         _postDataCache = {};
@@ -1296,10 +1340,13 @@ Structure.init("Codecollision");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var getPosts = function(url, onSuccess) {
 
-        // abort previous request
-        if(_getPost_jqXHR && _getPost_jqXHR.readyState != 4){
-            _getPost_jqXHR.abort();
-        }
+        // live page request - abort prefetch requests
+        _.each(ajaxRequests, function(jqXHR) {
+
+            if(jqXHR && jqXHR.readyState != 4){
+                jqXHR.abort();
+            }
+        });
 
         _getPostData(url, onSuccess);
     };
@@ -1309,13 +1356,15 @@ Structure.init("Codecollision");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var prefetchPostData = function(url, onSuccess) {
 
-        _getPostData(url, onSuccess);
+        return _getPostData(url, onSuccess);
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * _getPostData - ajax call to get post JSON
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var _getPostData = function(url, onSuccess) {
+
+        var jqXHR = null;
 
         url = Codecollision.util.utilities.cleanURL(url);
 
@@ -1331,7 +1380,7 @@ Structure.init("Codecollision");
         } else {
 
             // make ajax request
-            _getPost_jqXHR = $.ajax({
+            jqXHR = $.ajax({
                 url: url + AJAX_URL_APPEND,
                 type: 'GET',
                 dataType: 'json',
@@ -1346,7 +1395,12 @@ Structure.init("Codecollision");
 
                 }
             });
+
+            // store ajax request
+            ajaxRequests.push(jqXHR);
         }
+
+        return jqXHR;
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1454,6 +1508,7 @@ Structure.init("Codecollision");
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var _displayPosts = function(posts, mode) {
 
+        console.info('display post');
         var addedPosts = null;
 
         // hide loading status

@@ -8,7 +8,7 @@
     var AJAX_URL_APPEND = 'json/',
 
         // objects
-        _getPost_jqXHR = null,
+        ajaxRequests = [],
 
         // data
         _postDataCache = {};
@@ -26,10 +26,13 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var getPosts = function(url, onSuccess) {
 
-        // abort previous request
-        if(_getPost_jqXHR && _getPost_jqXHR.readyState != 4){
-            _getPost_jqXHR.abort();
-        }
+        // live page request - abort prefetch requests
+        _.each(ajaxRequests, function(jqXHR) {
+
+            if(jqXHR && jqXHR.readyState != 4){
+                jqXHR.abort();
+            }
+        });
 
         _getPostData(url, onSuccess);
     };
@@ -39,13 +42,15 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var prefetchPostData = function(url, onSuccess) {
 
-        _getPostData(url, onSuccess);
+        return _getPostData(url, onSuccess);
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * _getPostData - ajax call to get post JSON
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var _getPostData = function(url, onSuccess) {
+
+        var jqXHR = null;
 
         url = Codecollision.util.utilities.cleanURL(url);
 
@@ -61,7 +66,7 @@
         } else {
 
             // make ajax request
-            _getPost_jqXHR = $.ajax({
+            jqXHR = $.ajax({
                 url: url + AJAX_URL_APPEND,
                 type: 'GET',
                 dataType: 'json',
@@ -76,7 +81,12 @@
 
                 }
             });
+
+            // store ajax request
+            ajaxRequests.push(jqXHR);
         }
+
+        return jqXHR;
     };
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

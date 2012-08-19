@@ -70,6 +70,7 @@
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     var _displayPosts = function(posts, mode) {
 
+        console.info('display post');
         var addedPosts = null;
 
         // hide loading status
