@@ -42,9 +42,7 @@ module.exports = function(grunt) {
 		// concat
 		concat: {
 			dist: {
-				src: [
-					'<config:src.js>'
-				],
+				src: ['<config:src.js>'],
 				dest: 'dist/scripts.js'
 			}
 		},
@@ -55,14 +53,7 @@ module.exports = function(grunt) {
 				dest: 'dist/scripts.min.js'
 			}
 		},
-		// watch
-		watch: {
-			files: '<config:src.js>',
-			tasks: 'less concat min'
-		},
-
-		uglify: {},
-
+		// less
 		less: {
 			all: {
 				src: 'less/codecollision.less',
@@ -71,7 +62,17 @@ module.exports = function(grunt) {
 					compress: true
 				}
 			}
-		}
+		},
+
+		// watch
+		watch: {
+
+			files: ['<config:src.js>', '<config:src.less>'],
+			tasks: 'concat min less'
+		},
+
+		uglify: {}
+
 	});
 
 	// Default task.
